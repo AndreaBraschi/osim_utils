@@ -1,0 +1,30 @@
+[build-system]
+requires = ['setuptools >= 42', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = "osim_utils"
+version = "0.0.1"
+description = "Small set of functions that can help customising operations in OpenSim"
+authors = [
+    {name = "David Pagnon", email = "contact@david-pagnon.com"},
+]
+maintainers = [
+    { name = "Andrea Braschi", email = "andrea.braschi@forceteck.com" },
+]
+requires-python = ">=3"
+dependencies = [
+    "pandas"
+]
+
+classifiers = [
+    "Development Status :: Testing",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+]
