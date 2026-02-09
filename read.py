@@ -1,6 +1,5 @@
 import os
 from pandas import DataFrame
-import numpy as np
 
 def readStoFile(file_path: str) -> DataFrame:
     """
