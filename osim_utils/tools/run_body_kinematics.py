@@ -1,12 +1,10 @@
 import os
 from osim_utils.read import readStoFile
-from ..filters.deterministic import butterworth
-from opensim import Model, State, AnalyzeTool, BodyKinematics, Storage, StdVectorString
+from opensim import Model, State, AnalyzeTool, BodyKinematics, Storage
 
 # type hinting imports
 from pandas import DataFrame, Series
 from numpy import ndarray
-from typing import Optional, List
 
 
 def run_body_kinematics(model_filepath: str, filepath: str, filename: str):
