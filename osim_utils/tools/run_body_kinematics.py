@@ -7,7 +7,8 @@ from pandas import DataFrame, Series
 from numpy import ndarray
 
 
-def run_body_kinematics(model_filepath: str, filepath: str, filename: str):
+def run_body_kinematics(model_filepath: str, filepath: str, file_type: str,
+                        filename: str, output_dir: str) -> None:
     """
         This function aims at simplifying how the BodyKinematics tool is called and constructed, so that it can be done
         easily also from python scripting or with a CLI extension.
@@ -18,12 +19,6 @@ def run_body_kinematics(model_filepath: str, filepath: str, filename: str):
                       only the model coordinates or a storage file (.sto) which contains the full state vector.
             list_of_bodies: optional input in case the user were to be interested in the kinematics of only a subset of bodies.
     """
-    # where to print all the outputs
-    if os.path.split(filepath) == '':
-        output_dir: str = os.getcwd()
-    else:
-        output_dir: str = os.path.split(filepath)[-2]
-
 
     # Read file and get initial and final time
     motTime: Series = readStoFile(filepath)["time"]
@@ -35,13 +30,6 @@ def run_body_kinematics(model_filepath: str, filepath: str, filename: str):
     model.set_assembly_accuracy(1e-7)
     state: State = model.initSystem()
 
-    # let's check whether the current file is a .sto or a .mot file.
-    if filepath.split(".")[-1] in '.mot':
-        file: Storage = Storage(filepath)
-    else:
-        file = filepath
-
-
     # Construct empty AnalyzeKinematics tool
     analyzeTool = AnalyzeTool()
     analyzeTool.updAnalysisSet().cloneAndAppend(BodyKinematics())
@@ -52,7 +40,7 @@ def run_body_kinematics(model_filepath: str, filepath: str, filename: str):
     file_storage: Storage = Storage(filepath)
 
     # let's check whether the current file is a .sto or a .mot file.
-    if filepath.split(".")[-1] in '.mot':
+    if file_type in "mot":
         analyzeTool.setCoordinatesFileName(filepath)
         analyzeTool.setStatesFromMotion(state, file_storage, True)
     else:
