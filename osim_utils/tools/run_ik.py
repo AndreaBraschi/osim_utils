@@ -7,8 +7,7 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
            setup_file: Optional[str] = None, markers_not_to_track: Optional[List[str]] = None) -> None:
 
     """
-        This function aims at simplifying how the BodyKinematics tool is called and constructed, so that it can be done
-        easily also from python scripting or with a CLI extension.
+        This function abstracts away the use of the InverseKinematics tool using the OpenSim API.
 
         Args:
             model: .osim Model object
