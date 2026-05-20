@@ -1,11 +1,11 @@
 import os
 import c3d
-from numpy import sort, concatenate, array, expand_dims, zeros, linspace, arange
+from numpy import sort, concatenate, array, expand_dims, zeros, linspace, arange, eye, zeros_like
 
 from numpy import float64
 from numpy import ndarray
 from pandas import DataFrame
-from typing import List
+from typing import List, Optional
 
 def readStoFile(file_path: str) -> DataFrame:
     """
@@ -58,7 +58,7 @@ def readStoFile(file_path: str) -> DataFrame:
 
     return df
 
-def readTrc(file_path):
+def readTrc(file_path: str, full_labels: bool = False) -> DataFrame:
     """ function that reads .trc files and stores the data as a DataFrame"""
 
     file_id = open(file_path, 'r')
@@ -77,14 +77,22 @@ def readTrc(file_path):
         header.append(next_line)
 
     labels = next_line.split()
-    new_labels = []
-    for label in labels:
-        if label == 'Frame#' or label == 'Time':
-            new_labels.append(label)
-        else:
-            new_labels.append(label + '.X')
-            new_labels.append(label + '.Y')
-            new_labels.append(label + '.Z')
+
+    print(labels)
+
+
+    if full_labels:
+        new_labels = labels
+    else:
+        new_labels = []
+        for label in labels:
+            if label == 'Frame#' or label == 'Time':
+                new_labels.append(label)
+            else:
+                new_labels.append(label + '.X')
+                new_labels.append(label + '.Y')
+                new_labels.append(label + '.Z')
+
 
     next_line = file_id.readline()
 
@@ -100,7 +108,8 @@ def readTrc(file_path):
     df = DataFrame(data=data, columns=new_labels[1:])
     return df
 
-def readC3D(c3d_path: str) -> DataFrame:
+def readC3D(c3d_path: str, transform: ndarray = eye(3,3)) -> DataFrame:
+
     with open(c3d_path, 'rb') as handle:
         reader = c3d.Reader(handle)
         items_header = str(reader.header).split('\n')
@@ -149,12 +158,23 @@ def readC3D(c3d_path: str) -> DataFrame:
         rows: int = time.shape[0]
 
         # let's add the time string to the label list
-        write_list: List[str] = ["time"] + final_list
+        write_list: List[str] = ["Time"] + final_list
         arr: ndarray = zeros((rows + 1, columns + 1), dtype=float64)
 
         for i, points in enumerate(reader.read_frames()):
             c3d_line = concatenate([item[:3] for item in points[1]])
             c3d_data = expand_dims(c3d_line[index_data_markers], 0)
+            transformed_data: ndarray = zeros_like(c3d_data)
+
+            # we need to go through the data 3 by 3 and apply the transform
+            u: int = 0
+            for n in range(len(marker_labels)):
+                marker_data: ndarray = c3d_data[0, u:u + 3]
+
+                transformed_marker: ndarray = transform @ marker_data
+                transformed_data[0, u : u + 3] = transformed_marker
+
+                u += 3
 
             if i + 1 > rows:
                 # add a zero row
@@ -162,7 +182,7 @@ def readC3D(c3d_path: str) -> DataFrame:
                 time: ndarray = concatenate([time, zero_row], axis=0)
                 time[i] = time[i - 1] + dt
 
-            arr[i] = concatenate([time[i][:, None], c3d_data], axis=-1)
+            arr[i] = concatenate([time[i][:, None], transformed_data], axis=-1)
 
         df: DataFrame = DataFrame(data=arr, columns=write_list)
 
