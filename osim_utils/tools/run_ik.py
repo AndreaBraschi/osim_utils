@@ -29,7 +29,7 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
         ikTool = InverseKinematicsTool()
 
     # check whether .trc file has any missing marker
-    missing_markers = check_missing_markers_trc(trc_filepath)
+    missing_markers = check_missing_markers_trc(trc_filepath, init, end)
 
     if missing_markers is not None:
         taskIK = ikTool.getIKTaskSet()
