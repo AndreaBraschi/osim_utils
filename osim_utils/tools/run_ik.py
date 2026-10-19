@@ -7,7 +7,7 @@ from typing import Optional, List
 from ..checks import check_missing_markers_trc
 
 def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, init: float, end: float,
-           setup_file: Optional[str] = None, markers_not_to_track: Optional[List[str]] = None) -> None:
+           setup_file: Optional[str] = None) -> None:
 
     """
         This function abstracts away the use of the InverseKinematics tool using the OpenSim API.
@@ -20,7 +20,6 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
             init: initial time
             end: final time
             setup_file: path to the IK Tool setup file
-            markers_not_to_track: list of markers to not track
     """
 
     if setup_file is not None:
@@ -33,7 +32,7 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
 
     if missing_markers is not None:
         taskIK = ikTool.getIKTaskSet()
-        for marker in markers_not_to_track:
+        for marker in missing_markers:
             taskIK.get(marker).setApply(False)
 
     ikTool.setModel(model)
