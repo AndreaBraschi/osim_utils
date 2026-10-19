@@ -33,7 +33,8 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
     if missing_markers is not None:
         taskIK = ikTool.getIKTaskSet()
         for marker in missing_markers:
-            taskIK.get(marker).setApply(False)
+            marker_ = marker[:-2]
+            taskIK.get(marker_).setApply(False)
 
     ikTool.setModel(model)
     ikTool.set_marker_file(trc_filepath)
