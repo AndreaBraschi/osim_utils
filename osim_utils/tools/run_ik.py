@@ -3,6 +3,9 @@ from opensim import Model
 from opensim import InverseKinematicsTool
 from typing import Optional, List
 
+# local imports
+from ..checks import check_missing_markers_trc
+
 def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, init: float, end: float,
            setup_file: Optional[str] = None, markers_not_to_track: Optional[List[str]] = None) -> None:
 
@@ -25,7 +28,10 @@ def run_ik(model: Model, trc_filepath: str, mot_filepath: str, output_dir: str, 
     else:
         ikTool = InverseKinematicsTool()
 
-    if markers_not_to_track is not None:
+    # check whether .trc file has any missing marker
+    missing_markers = check_missing_markers_trc(trc_filepath)
+
+    if missing_markers is not None:
         taskIK = ikTool.getIKTaskSet()
         for marker in markers_not_to_track:
             taskIK.get(marker).setApply(False)
