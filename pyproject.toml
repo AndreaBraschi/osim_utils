@@ -7,14 +7,15 @@ name = "osim_utils"
 version = "0.0.1"
 description = "Small set of functions that can help customising operations in OpenSim"
 authors = [
-    {name = "David Pagnon", email = "contact@david-pagnon.com"},
+    {name = "Andrea Braschi", email = "andrea.braschi@forceteck.com"},
 ]
 maintainers = [
     { name = "Andrea Braschi", email = "andrea.braschi@forceteck.com" },
 ]
 requires-python = ">=3"
 dependencies = [
-    "pandas"
+    "pandas",
+    "c3d"
 ]
 
 classifiers = [
